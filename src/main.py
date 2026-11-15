@@ -23,7 +23,8 @@ from sklearn.metrics import (
 warnings.filterwarnings("ignore")
 
 def main():
-    print("Gilak jago banget gw")
+    print("PREDIKSI ONLINE SHOPPERS PURCHASING INTENTION")
+    print("Dataset: UCI Machine Learning Repository")
 
 # Prepare path untuk directory
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -32,16 +33,24 @@ data_path = os.path.join(project_root, "dataset", "online_shoppers_intention.csv
 output_dir = os.path.join(project_root, "output")
 os.makedirs(output_dir, exist_ok=True)
 
-print("Loading dataset dan checking dataset...")
+print("\nLoading dataset dan checking dataset...")
 if not os.path.exists(data_path):
     raise FileNotFoundError(f"Dataset tidak ditemukan di path: {data_path}")
 
 df = pd.read_csv(data_path)
-print(f"Dimension dataset: {df.shape[0]} baris x {df.shape[1]} kolom")
+total_awal = len(df)
+print(f"Dimensi Dataset Mentah: {total_awal} baris x {df.shape[1]} kolom")
 
 # check for missing values
-null_count = df.isnull().sum().sum()
-print(f"Total missing values: {null_count}")
+null_counts = df.isnull().sum().sum()
+print(f"Total missing values: {null_counts}")
+
+# cleaning
+jml_duplikat = df.duplicated().sum()
+print(f"Data Duplikat Ditemukan: {jml_duplikat} baris ({jml_duplikat/total_awal*100:.2f}%)")
+print("Membersihkan baris duplikat untuk mencegah data leakage dan model bias...")
+df = df.drop_duplicates().reset_index(drop=True)
+print(f"Dimensi Dataset Setelah De-duplikasi: {len(df)} baris")
 
 df['Revenue_Num'] = df['Revenue'].astype(int)
 
